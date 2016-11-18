@@ -2,55 +2,55 @@
 
 #include "Dictionary.h"
 
+int capacity;
+int size;
+string* hashTable[20];
+
 Dictionary::Dictionary() {
-    string hashTable[20];
-    capacity = 20;
-    size = 0;
+    string* hashTable[20];
+    int capacity = 20;
+    int size = 0;
 }
 
 Dictionary::Dictionary(const Dictionary &orig) {
-    size = orig.size;
-    capacity = orig.capacity;
-    string hashTable[capacity];
-    for (int i = 0; i < orig.size(); i++) { //error: expression cannot be used as a function...something to do with orig.size()
-        string(hashTable[i]) = orig.hashTable[i]; // may need "*" && error: invalid conversion from 'std::string* {aka std::basic_string<char>*}' to 'char' [-fpermissive]
+    int size = orig.size;
+    int capacity = orig.capacity;
+    string* hashTable[capacity];
+    for (int i = 0; i < orig.size; i++) {
+        hashTable[i] = orig.hashTable[i]; // may need "*" && error: invalid conversion from 'std::string* {aka std::basic_string<char>*}' to 'char' [-fpermissive]
     }
 }
 
 Dictionary::~Dictionary() {
-    // delete the array
-    delete[] hashTable; // gives a warning about deleting array
-    //it may not be necessary to delete since it should deallocate once it is out of scope.
+
 }
 
 Dictionary &Dictionary::operator=(const Dictionary &orig) {
     // she checks hers to see if it's the same based off of the node for a quicker check, but we have no distinguishing trait about our hashtable, so we're just going to default to copying all of it
-    size = orig.size;
-    capacity = orig.capacity;
-    string hashTable[capacity];
-    for (int i = 0; i < orig.size(); i++) {
+    int size = orig.size;
+    int capacity = orig.capacity;
+    string* hashTable[capacity];
+    for (int i = 0; i < orig.size; i++) {
         hashTable[i] = orig.hashTable[i]; // may need "*"
     }
     return *this;
 }
 
-unsigned int
-hash(const string &key) // modified slightly, removed tableSize parameter, as we keep track of that with our capacity variable
-{
+unsigned int hash(const string &key){ // modified slightly, removed tableSize parameter, as we keep track of that with our capacity variable
     unsigned int hashVal = 0;
 
     for (char ch : key) {
         hashVal = 37 * hashVal + ch;
     }
+
     return hashVal % capacity;
 }
 
 bool check(int index) {
     bool open = false;
-
-    if (hashTable[index] == NULL) // not sure if accessing correctly, should have an "*" or nah...???
+    if (hashTable[index] == NULL) { // not sure if accessing correctly, should have an "*" or nah...???
         open = true;
-
+    }
     return open;
 }
 
@@ -71,7 +71,7 @@ int quadProbe(int index) {
 void rehash() {
     int index = 0;
     bool open = false;
-    string *temp = new int[capacity * 2];
+    int* temp[capacity * 2];
 
     for (int i = 0; i < size; i++) {
         if (hashTable[i] == NULL)
@@ -128,7 +128,8 @@ bool quadCheck(string key, int index) // checks all quadratic probe points until
 
 bool Dictionary::FindEntry(string key) {
     bool found = false;
-
+    bool open = false;
+    int index = 0;
     index = hash(key);
     open = check(index);
     if (open)
