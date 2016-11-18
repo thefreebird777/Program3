@@ -22,7 +22,7 @@ class Dictionary
   AVLTreeNode* root;
   int size;
   int capacity;
-  string* hashTable[];
+  string* hashTable;
 
  public:
 
@@ -56,6 +56,21 @@ class Dictionary
 
   void deleteDict();
   // properly frees all memory occupied by this Dictionary
+
+  bool checkx(int index);
+  // checks to see if an array index is filled or not
+
+  void rehashx();
+  // rehashes the array and doubles the capacity afterwards
+
+  unsigned int hashx(const string key);
+  // hashes the key provided and returns the array index to place the entry
+
+  int quadProbe(int index);
+  // handles the quadratic probing
+
+  bool quadCheck(string key, int index);
+  // handles quadratic probing when checking the hash table
 
 };
 
