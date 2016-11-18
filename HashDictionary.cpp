@@ -36,7 +36,7 @@ Dictionary &Dictionary::operator=(const Dictionary &orig) {
     return *this;
 }
 
-unsigned int hash(const string &key){ // modified slightly, removed tableSize parameter, as we keep track of that with our capacity variable
+unsigned int hashx(const string &key){ // modified slightly, removed tableSize parameter, as we keep track of that with our capacity variable
     unsigned int hashVal = 0;
 
     for (char ch : key) {
@@ -76,7 +76,7 @@ void rehash() {
     for (int i = 0; i < size; i++) {
         if (hashTable[i] == NULL)
             continue;
-        index = hash(hashTable[i]);
+        index = hashx(hashTable[i]);
         open = check(index);
         if (!open)
             index = quadProbe(index);
@@ -91,7 +91,7 @@ void Dictionary::AddEntry(string anEntry) {
     int index = 0;
     bool open = false;
 
-    index = hash(anEntry); // returns index after using hash function from book
+    index = hashx(anEntry); // returns index after using hash function from book
     open = check(index); // returns a bool: true if an open hash table slot, false if not
     if (!open)
         index = quadProbe(index);
@@ -130,7 +130,7 @@ bool Dictionary::FindEntry(string key) {
     bool found = false;
     bool open = false;
     int index = 0;
-    index = hash(key);
+    index = hashx(key);
     open = check(index);
     if (open)
         found = false;

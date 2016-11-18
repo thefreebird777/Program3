@@ -1,5 +1,5 @@
 #include "HashDictionary.cpp"
-using namespace std;
+
 
 
 string randomStrGen(int length) {
