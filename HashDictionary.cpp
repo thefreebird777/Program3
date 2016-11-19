@@ -6,7 +6,7 @@ Dictionary::Dictionary() {
     hashTable = new string[20];
     capacity = 20;
     size = 0;
-    for (int i = 0; i < capacity-1; i++)
+    for (int i = 0; i < capacity; i++)
         hashTable[i] = "0";
 }
 
@@ -14,7 +14,7 @@ Dictionary::Dictionary(const Dictionary &orig) {
     size = orig.size;
     capacity = orig.capacity;
     hashTable = new string[capacity];
-    for (int i = 0; i < orig.size; i++) {
+    for (int i = 0; i < orig.capacity; i++) {
         hashTable[i] = orig.hashTable[i];
     }
 }
@@ -27,7 +27,7 @@ Dictionary &Dictionary::operator=(const Dictionary &orig) {
     size = orig.size;
     capacity = orig.capacity;
     hashTable = new string[capacity];
-    for (int i = 0; i < orig.size; i++) {
+    for (int i = 0; i < orig.capacity; i++) {
         hashTable[i] = orig.hashTable[i];
     }
     return *this;
@@ -56,7 +56,7 @@ int Dictionary::quadProbe(int index) {
     int probe = 0;
 
     while (!open) {
-        probe = index + (count * count);
+        probe = (index + (count * count)) % capacity;
         open = checkx(probe);
         count++;
     }
@@ -65,16 +65,19 @@ int Dictionary::quadProbe(int index) {
 }
 
 void Dictionary::rehashx() {
+    int count, probe;
     int index = 0;
     bool open = false;
-    string *temp = new string[capacity*2];
-    for (int i = 0; i < (capacity*2)-1; i++)
+    int ogCap = capacity;
+    capacity = capacity * 2;
+    string *temp = new string[capacity];
+    for (int i = 0; i < (capacity); i++)
 	temp[i] = "0";
 
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < ogCap; i++) {
         if (hashTable[i].compare("0") == 0)
             continue;
-        index = hashx(hashTable[i]); // took out "->c_str()"
+        index = hashx(hashTable[i]);
         if (temp[index].compare("0") == 0)
             open = true;
         else
@@ -82,24 +85,23 @@ void Dictionary::rehashx() {
 
         if (!open)
         {
-	        int count = 1;
-            int probe = 0;
+	    count = 1;
+            probe = 0;
 
             while (!open) {
-            probe = index + (count * count);
-            if (temp[index].compare("0") == 0)
+            probe = (index + (count * count)) % capacity;
+            if (temp[probe].compare("0") == 0)
                 open = true;
             else
                 open = false;
             count++;
             }
             index = probe;
-	    }
+	}
         temp[index] = hashTable[i];
     }
 
-    hashTable = temp; // previously caused an error, but this is necessary
-    capacity = capacity * 2;
+    hashTable = temp;
 }
 
 void Dictionary::AddEntry(string anEntry) {
@@ -110,7 +112,7 @@ void Dictionary::AddEntry(string anEntry) {
     open = checkx(index);
     if (!open)
         index = quadProbe(index);
-    hashTable[index] = anEntry; // took out the "&" on "anEntry"
+    hashTable[index] = anEntry;
     size++;
 
     double rehash = (double) size / (double) capacity;
@@ -126,10 +128,10 @@ bool Dictionary::quadCheck(string key, int index)
     int probe = 0;
 
     while (!open) {
-        probe = index + (count * count);
+        probe = (index + (count * count)) % capacity;
         open = checkx(probe);
         if (!open) {
-            if (key.compare(hashTable[index]) == 0) { // took out "->c_str()"
+            if (key.compare(hashTable[index]) == 0) {
                 check = true;
                 break;
             }
@@ -149,7 +151,7 @@ bool Dictionary::FindEntry(string key) {
     if (open)
         found = false;
     else {
-        if (key.compare(hashTable[index]) == 0) { // took out "->c_str()"
+        if (key.compare(hashTable[index]) == 0) {
             found = true;
         } else
             found = quadCheck(key, index);
@@ -159,5 +161,6 @@ bool Dictionary::FindEntry(string key) {
 }
 
 void Dictionary::PrintSorted(ostream &outStream) {
-    // figure something out or just print the array where it's not empty
+    for (int i = 0; i < capacity; i++)
+	outStream << hashTable[i] << endl;
 }
